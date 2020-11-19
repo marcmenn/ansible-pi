@@ -1,0 +1,6 @@
+all:
+  hosts:
+    pi:
+      ansible_host: raspberrypi
+      ansible_user: pi
+      ansible_become: true
