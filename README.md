@@ -21,3 +21,12 @@ Show your inventory:
 Gather ansible setup:
 
     ansible all -m setup
+
+## Individual playbooks
+
+Configure them first (adjust variables, i.e. as host-vars in your inventory.yml).
+Then run them with `ansible-playbook <playbook.yml>`
+
+### time-machine-target.yml
+
+Configure pi as target device for Apples TimeMachine.
