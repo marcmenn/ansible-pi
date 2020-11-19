@@ -1,4 +1,5 @@
 # This playbook basically follows instructions from https://mudge.name/2019/11/12/using-a-raspberry-pi-for-time-machine/
+# and https://wiki.samba.org/index.php/Configure_Samba_to_Work_Better_with_Mac_OS_X
 # You need to have an ext4 partition beforehand, this playbook tries not to create/destroy one
 - name: prepare raspberry for time machine enabled samba
   hosts: pi
@@ -10,9 +11,18 @@
     mountpoint: /mnt/media
     backupDirectory: "{{ mountpoint }}/Backups"
     # The users will be created if they do not exist already, but they will have to have their passwords set
-    users:
-    - pi
+    #users:
+    #- pi
     group: users
+    globalSettings:
+      min protocol: SMB2
+      vfs objects: fruit streams_xattr
+      fruit:metadata: stream
+      fruit:model: MacSamba
+      fruit:posix_rename: 'yes'
+      fruit:veto_appledouble: 'no'
+      fruit:wipe_intentionally_left_blank_rfork: 'yes'
+      fruit:delete_empty_adfiles: 'yes'
     settings:
       comment: "Backups"
       path: "{{ backupDirectory }}"
@@ -20,6 +30,7 @@
       read only: "no"
       vfs objects: "catia fruit streams_xattr"
       fruit:time machine: "yes"
+      # fruit:time machine max size: SIZE
 
   tasks:
   - name: Install packages samba and hdparm
@@ -69,6 +80,15 @@
       recurse: false
       mode: 01770
 
+  - name: Configure global samba
+    ini_file:
+      path: /etc/samba/smb.conf
+      create: no
+      section: Global
+      option: "{{ item.key }}"
+      value: "{{ item.value }}"
+    loop: "{{ globalSettings | dict2items }}"
+
   - name: Configure samba share
     ini_file:
       path: /etc/samba/smb.conf
@@ -77,3 +97,9 @@
       option: "{{ item.key }}"
       value: "{{ item.value }}"
     loop: "{{ settings | dict2items }}"
+
+  - name: Samba restart
+    # when: TODO: only if samba has changes
+    service:
+      name: smbd
+      state: reloaded
