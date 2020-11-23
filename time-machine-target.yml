@@ -88,6 +88,7 @@
       option: "{{ item.key }}"
       value: "{{ item.value }}"
     loop: "{{ globalSettings | dict2items }}"
+    register: sambaGlobal
 
   - name: Configure samba share
     ini_file:
@@ -97,9 +98,16 @@
       option: "{{ item.key }}"
       value: "{{ item.value }}"
     loop: "{{ settings | dict2items }}"
+    register: sambaShare
+
+  - name: Test need for restart
+    loop: "{{sambaGlobal.results|union(sambaShare.results)}}"
+    when: item.changed
+    set_fact:
+      sambaRestart: true
 
   - name: Samba restart
-    # when: TODO: only if samba has changes
+    when: sambaRestart|default(false)
     service:
       name: smbd
       state: reloaded
