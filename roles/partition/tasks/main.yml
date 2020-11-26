@@ -1,0 +1,6 @@
+- parted:
+    device: "{{ partitionDevice }}"
+    state: "{{ partitionState }}"
+    label: gpt
+    fs_type: ext4
+    number: 1
