@@ -14,7 +14,7 @@
 
 - name: Map partition to mountpoint
   mount:
-    src: "PARTUUID={{ partuuid }}"
+    src: "{{ mountSrc }}"
     path: "{{ mountpoint }}"
     fstype: ext4
     opts: sync,noexec,nodev,noatime,nodiratime

@@ -1,0 +1,1 @@
+partsrc: "{{ ['PARTUUID=' if partuuid is defined else 'UUID=', partuuid|d(uuid)]|join }}"
