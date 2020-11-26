@@ -1,0 +1,27 @@
+# UUID of target disk (use blkid to find out)
+# uuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
+# UUID of target partition (use blkid to find out)
+# partuuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
+mountpoint: /mnt/media
+backupDirectory: "{{ mountpoint }}/Backups"
+# The users will be created if they do not exist already, but they will have to have their passwords set
+#users:
+#- pi
+group: users
+globalSettings:
+  min protocol: SMB2
+  vfs objects: fruit streams_xattr
+  fruit:metadata: stream
+  fruit:model: MacSamba
+  fruit:posix_rename: 'yes'
+  fruit:veto_appledouble: 'no'
+  fruit:wipe_intentionally_left_blank_rfork: 'yes'
+  fruit:delete_empty_adfiles: 'yes'
+settings:
+  comment: "Backups"
+  path: "{{ backupDirectory }}"
+  valid users: "@{{ group }}"
+  read only: "no"
+  vfs objects: "catia fruit streams_xattr"
+  fruit:time machine: "yes"
+  # fruit:time machine max size: SIZE

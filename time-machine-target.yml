@@ -1,6 +1,3 @@
-# This playbook basically follows instructions from https://mudge.name/2019/11/12/using-a-raspberry-pi-for-time-machine/
-# and https://wiki.samba.org/index.php/Configure_Samba_to_Work_Better_with_Mac_OS_X
-# You need to have an ext4 partition beforehand, this playbook tries not to create/destroy one
 - name: prepare raspberry for time machine enabled samba
   hosts: pi
   vars:
@@ -8,106 +5,9 @@
     # uuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
     # UUID of target partition (use blkid to find out)
     # partuuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
-    mountpoint: /mnt/media
-    backupDirectory: "{{ mountpoint }}/Backups"
     # The users will be created if they do not exist already, but they will have to have their passwords set
     #users:
     #- pi
-    group: users
-    globalSettings:
-      min protocol: SMB2
-      vfs objects: fruit streams_xattr
-      fruit:metadata: stream
-      fruit:model: MacSamba
-      fruit:posix_rename: 'yes'
-      fruit:veto_appledouble: 'no'
-      fruit:wipe_intentionally_left_blank_rfork: 'yes'
-      fruit:delete_empty_adfiles: 'yes'
-    settings:
-      comment: "Backups"
-      path: "{{ backupDirectory }}"
-      valid users: "@{{ group }}"
-      read only: "no"
-      vfs objects: "catia fruit streams_xattr"
-      fruit:time machine: "yes"
-      # fruit:time machine max size: SIZE
 
-  tasks:
-  - name: Install packages samba and hdparm
-    apt:
-      name:
-      - samba
-      - hdparm
-
-  - name: "Create mountpoint '{{ mountpoint }}'"
-    file:
-      path: "{{ mountpoint }}"
-      state: directory
-
-  - name: Map partition to mountpoint
-    mount:
-      src: "PARTUUID={{ partuuid }}"
-      path: "{{ mountpoint }}"
-      fstype: ext4
-      opts: sync,noexec,nodev,noatime,nodiratime
-      state: mounted
-
-  - name: Control spindown
-    lineinfile:
-      path: /etc/hdparm.conf
-      regexp: "^/dev/disk/by-uuid/{{ uuid }}"
-      line: "/dev/disk/by-uuid/{{ uuid }} { spindown_time = 120 }"
-    register: spindownAdded
-
-  - name: Apply spindown
-    when: spindownAdded.changed
-    environment:
-      DEVNAME: "/dev/disk/by-uuid/{{ uuid }}"
-    command: /lib/udev/hdparm
-
-  - name: Create users
-    user:
-      name: "{{ item }}"
-      group: "{{ group }}"
-    loop: "{{ users }}"
-
-  - name: "Create backup directory {{ backupDirectory }}"
-    file:
-      path: "{{ backupDirectory }}"
-      state: directory
-      owner: "root"
-      group: "{{ group }}"
-      recurse: false
-      mode: 01770
-
-  - name: Configure global samba
-    ini_file:
-      path: /etc/samba/smb.conf
-      create: no
-      section: Global
-      option: "{{ item.key }}"
-      value: "{{ item.value }}"
-    loop: "{{ globalSettings | dict2items }}"
-    register: sambaGlobal
-
-  - name: Configure samba share
-    ini_file:
-      path: /etc/samba/smb.conf
-      create: no
-      section: Backups
-      option: "{{ item.key }}"
-      value: "{{ item.value }}"
-    loop: "{{ settings | dict2items }}"
-    register: sambaShare
-
-  - name: Test need for restart
-    loop: "{{sambaGlobal.results|union(sambaShare.results)}}"
-    when: item.changed
-    set_fact:
-      sambaRestart: true
-
-  - name: Samba restart
-    when: sambaRestart|default(false)
-    service:
-      name: smbd
-      state: reloaded
+  roles:
+  - time-machine
