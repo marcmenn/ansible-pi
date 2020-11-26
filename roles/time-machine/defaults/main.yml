@@ -2,6 +2,7 @@
 # uuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
 # UUID of target partition (use blkid to find out)
 # partuuid: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
+uuid: "{{ hostvars[inventory_hostname].ansible_device_links.uuids['sda1'][0] }}"
 mountpoint: /mnt/media
 backupDirectory: "{{ mountpoint }}/Backups"
 # The users will be created if they do not exist already, but they will have to have their passwords set
