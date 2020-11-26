@@ -4,3 +4,7 @@
     label: gpt
     fs_type: ext4
     number: 1
+
+- filesystem:
+    dev: "{{ partitionDevice }}1"
+    fstype: ext4
