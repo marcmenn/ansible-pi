@@ -26,4 +26,4 @@ settings:
   read only: "no"
   vfs objects: "catia fruit streams_xattr"
   fruit:time machine: "yes"
-  # fruit:time machine max size: SIZE
+  fruit:time machine max size: "1T"
