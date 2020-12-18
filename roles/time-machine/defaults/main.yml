@@ -13,7 +13,7 @@ globalSettings:
   min protocol: SMB2
   vfs objects: fruit streams_xattr
   fruit:metadata: stream
-  fruit:model: MacSamba
+  fruit:model: TimeCapsule
   fruit:posix_rename: 'yes'
   fruit:veto_appledouble: 'no'
   fruit:zero_file_id: 'yes'
