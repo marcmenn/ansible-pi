@@ -16,6 +16,7 @@ globalSettings:
   fruit:model: MacSamba
   fruit:posix_rename: 'yes'
   fruit:veto_appledouble: 'no'
+  fruit:zero_file_id: 'yes'
   fruit:wipe_intentionally_left_blank_rfork: 'yes'
   fruit:delete_empty_adfiles: 'yes'
 settings:
