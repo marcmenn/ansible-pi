@@ -54,6 +54,7 @@
     create: no
     section: Global
     option: "{{ item.key }}"
+    state: "{{ 'present' if item.value is truthy else 'absent' }}"
     value: "{{ item.value }}"
   loop: "{{ globalSettings | dict2items }}"
   register: sambaGlobal
@@ -64,6 +65,7 @@
     create: no
     section: Backups
     option: "{{ item.key }}"
+    state: "{{ 'present' if item.value is truthy else 'absent' }}"
     value: "{{ item.value }}"
   loop: "{{ settings | dict2items }}"
   register: sambaShare
