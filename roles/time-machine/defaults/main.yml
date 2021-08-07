@@ -8,6 +8,8 @@ backupDirectory: "{{ mountpoint }}/Backups"
 # The users will be created if they do not exist already, but they will have to have their passwords set
 #users:
 #- pi
+sambaShare: { results: [] }
+sambaGlobal: { results: [] }
 group: users
 globalSettings:
   min protocol: SMB2
