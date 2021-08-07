@@ -1,0 +1,14 @@
+- parted:
+    device: "{{ partitionDevice }}"
+    unit: MiB
+  register: info
+  name: "Getting partition info"
+
+- parted:
+    device: "{{ partitionDevice }}"
+    number: "{{ item.num }}"
+    state: absent
+    label: gpt
+  loop: "{{ info.partitions }}"
+  when: (item.num != 1 or item.fstype != 'ext4')
+  name: "Removing extra partitions"

@@ -1,37 +1,13 @@
 - parted:
     device: "{{ partitionDevice }}"
-    unit: MiB
-  register: info
-  name: "Getting partition info"
-
-- pause:
-    prompt: "Do you want to repartition {{ partitionDevice }} (yes/no)?"
-  register: repartition_device
-
-- parted:
-    device: "{{ partitionDevice }}"
-    number: "{{ item.num }}"
-    state: absent
-  loop: "{{ info.partitions }}"
-  when: repartition_device.user_input | bool and (item.num != 1 or item.fstype != 'ext4')
-  name: "Removing extra partitions"
-
-- parted:
-    device: "{{ partitionDevice }}"
     state: present
     label: gpt
     fs_type: ext4
     number: 1
   name: "Ensuring backup parition"
-  when: repartition_device.user_input | bool
-
-- pause:
-    prompt: "Do you want to ensure ext4 on {{ partitionDevice }}1 (yes/no)?"
-  register: format_device
 
 - filesystem:
     dev: "{{ partitionDevice }}1"
     fstype: ext4
-    force: true
+    resizefs: yes
   name: "Ensuring ext4 filesystem"
-  when: format_device.user_input | bool
