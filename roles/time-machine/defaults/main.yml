@@ -26,4 +26,5 @@ settings:
   read only: "no"
   vfs objects: "catia fruit streams_xattr"
   fruit:time machine: "yes"
-  fruit:time machine max size: "1T"
+  # default to remove option, samba currently crashes sometime when trying to calculate used size
+  fruit:time machine max size: null
