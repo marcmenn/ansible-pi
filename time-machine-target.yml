@@ -8,6 +8,5 @@
     #- pi
 
   roles:
-  # partition and format the backup hard drive to ext4
-  # - partition
+  - partition
   - time-machine
